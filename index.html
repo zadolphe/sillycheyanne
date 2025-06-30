@@ -82,11 +82,11 @@
 
       // Derive Fernet-compatible key (SHA256 hash, base64url)
       const hash = CryptoJS.SHA256(combo);
-      const keyBytes = CryptoJS.lib.WordArray.create(hash.words.slice(0, 8));
-      const base64Key = CryptoJS.enc.Base64.stringify(keyBytes)
+      const base64Key = CryptoJS.enc.Base64.stringify(hash)
         .replace(/=/g, '')
         .replace(/\+/g, '-')
         .replace(/\//g, '_');
+
 
       // Use WebAssembly-compatible Fernet decryption via JS fallback
       try {
