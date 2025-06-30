@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Duet Key</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fffdf7; 
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/30/Blank_sheet_music.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+
+      color: #2e2e2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding: 50px 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+    .poem {
+      font-style: italic;
+      margin-bottom: 2em;
+      text-align: center;
+      max-width: 600px;
+    }
+    input {
+      font-size: 1.2em;
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>A Duet in Fifths</h1>
+  <div class="poem">
+    Your strings begin on C, mine on G.<br>
+    We play in fifths, two instruments in time.<br>
+    Enter your tuning number and the measure from your key.<br>
+    If our harmony is true… you’ll know my name.
+  </div>
+
+  <input type="text" id="cello" placeholder="Cello string (e.g. 60)" />
+  <input type="text" id="code" placeholder="6-digit code" maxlength="6" />
+  <br>
+  <button onclick="decryptName()">🎻 Unlock</button>
+
+  <div class="result" id="result"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    const encrypted = "gAAAAABoYfZ9dJOPAEmgjQXggVbkENMsNsru7iWFSczRTVEHAlcsaOlHX78wDAClBPwST1sDapRh1fqJpOQPI3RTf5ybartWzg==";
+
+    async function decryptName() {
+      const cello = document.getElementById('cello').value;
+      const code = document.getElementById('code').value;
+      const combo = cello + code;
+
+      if (combo.length < 8) {
+        document.getElementById('result').textContent = "Please enter both values.";
+        return;
+      }
+
+      // Derive Fernet-compatible key (SHA256 hash, base64url)
+      const hash = CryptoJS.SHA256(combo);
+      const keyBytes = CryptoJS.lib.WordArray.create(hash.words.slice(0, 8));
+      const base64Key = CryptoJS.enc.Base64.stringify(keyBytes)
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
+
+      // Use WebAssembly-compatible Fernet decryption via JS fallback
+      try {
+        const response = await fetch("https://fernet.vercel.app/api/decrypt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: encrypted, key: base64Key })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('result').innerHTML = "🎼 " + data.message;
+        } else {
+          document.getElementById('result').textContent = "The harmony's off… try again.";
+        }
+      } catch (err) {
+        document.getElementById('result').textContent = "An error occurred during decryption.";
+      }
+    }
+  </script>
+</body>
+</html>
