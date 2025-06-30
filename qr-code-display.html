@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scan to Begin</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fffdf7;
+      color: #2e2e2e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 40px;
+      max-width: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+      color: #3a3a3a;
+    }
+    .subtitle {
+      font-style: italic;
+      color: #666;
+      margin-bottom: 2em;
+      font-size: 1.1em;
+    }
+    .qr-container {
+      position: relative;
+      display: inline-block;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    #qrcode {
+      margin: 0 auto;
+    }
+    .cello-left, .cello-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 120px;
+      opacity: 0.15;
+      color: #8B4513;
+    }
+    .cello-left {
+      left: -80px;
+    }
+    .cello-right {
+      right: -80px;
+    }
+    .instruction {
+      margin-top: 2em;
+      font-size: 1.2em;
+      color: #555;
+    }
+    .musical-note {
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+      font-size: 1.5em;
+      margin: 0 5px;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="cello-left">🎻</div>
+    <div class="cello-right">🎻</div>
+    
+    <div class="qr-container">
+      <div id="qrcode"></div>
+    </div>
+  </div>
+  
+  <script>
+    // Generate QR code
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://zadolphe.github.io/decafbeanwaterdrinker/",
+      width: 256,
+      height: 256,
+      colorDark: "#2e2e2e",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>
